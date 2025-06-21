@@ -1,35 +1,46 @@
 import cv2
-import mediapipe as mp
+import os
 
-mp_pose = mp.solutions.pose
-mp_drawing = mp.solutions.drawing_utils
+def extract_frames(source=0, output_dir='extracted_images', interval=0.5):
+    """
+    Extracts frames from a video source every `interval` seconds.
 
-pose = mp_pose.Pose(static_image_mode=False,
-                    model_complexity=1,
-                    enable_segmentation=False,
-                    min_detection_confidence=0.5,
-                    min_tracking_confidence=0.5)
+    Args:
+        source (int or str): Camera index (e.g., 0) or video file path.
+        output_dir (str): Directory to save the extracted frames.
+        interval (float): Time interval between frames in seconds.
+    """
+    os.makedirs(output_dir, exist_ok=True)
+    cap = cv2.VideoCapture(source)
 
-cap = cv2.VideoCapture(0)  
+    if not cap.isOpened():
+        print(f"Error: Could not open video source {source}")
+        return
 
-while cap.isOpened():
-    ret, frame = cap.read()
-    if not ret:
-        break
-    image_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-    results = pose.process(image_rgb)
-    if results.pose_landmarks:
-        mp_drawing.draw_landmarks(
-            frame,
-            results.pose_landmarks,
-            mp_pose.POSE_CONNECTIONS,
-            mp_drawing.DrawingSpec(color=(0, 255, 0), thickness=2, circle_radius=2),
-            mp_drawing.DrawingSpec(color=(255, 0, 0), thickness=2)
-        )
-    cv2.imshow("Pose Detection", frame)
+    fps = cap.get(cv2.CAP_PROP_FPS)
+    if fps == 0 or fps != fps:  # Handle NaN or 0
+        fps = 30  # Fallback for unknown FPS (e.g., webcams)
 
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
-cap.release()
-cv2.destroyAllWindows()
-pose.close()
+    frame_interval = int(fps * interval)
+    print(f"Capturing 1 frame every {interval}s (every {frame_interval} frames at {fps} FPS)")
+
+    frame_count = 0
+    saved_count = 0
+
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            break
+
+        if frame_count % frame_interval == 0:
+            filename = os.path.join(output_dir, f"frame_{saved_count:04d}.jpg")
+            cv2.imwrite(filename, frame)
+            print(f"Saved {filename}")
+            saved_count += 1
+
+        frame_count += 1
+
+    cap.release()
+
+
+extract_frames(source=0)
