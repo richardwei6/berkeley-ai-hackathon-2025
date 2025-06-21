@@ -1,0 +1,47 @@
+import cv2
+import mediapipe as mp
+import time
+
+# Initialize MediaPipe pose estimator
+mp_pose = mp.solutions.pose
+pose = mp_pose.Pose()
+mp_draw = mp.solutions.drawing_utils
+
+# Thresholds
+fall_threshold_y = 0.4  # Rough estimate for collapse detection
+history = []
+history_length = 10
+
+cap = cv2.VideoCapture(0)  # Use webcam; for IP camera replace with URL
+
+while True:
+    success, img = cap.read()
+    if not success:
+        break
+
+    img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    results = pose.process(img_rgb)
+
+    if results.pose_landmarks:
+        # Draw landmarks
+        mp_draw.draw_landmarks(img, results.pose_landmarks, mp_pose.POSE_CONNECTIONS)
+
+        # Get nose or midpoint between shoulders for collapse check
+        landmarks = results.pose_landmarks.landmark
+        y_coords = [landmarks[mp_pose.PoseLandmark.NOSE.value].y]
+        avg_y = sum(y_coords) / len(y_coords)
+
+        history.append(avg_y)
+        if len(history) > history_length:
+            history.pop(0)
+
+        # Check if sudden drop in Y coordinate (simplified collapse detection)
+        if len(history) == history_length and max(history) - min(history) > fall_threshold_y:
+            cv2.putText(img, "Collapse Detected!", (50, 100), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 0, 255), 4)
+
+    cv2.imshow("Emergency Monitor", img)
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+cap.release()
+cv2.destroyAllWindows()
