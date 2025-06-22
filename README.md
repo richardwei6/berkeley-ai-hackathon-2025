@@ -32,20 +32,15 @@ To develop an AI-powered pipeline that monitors live or remote video feeds, **an
 
 ## Setup
 
-```bash
-pip install -r requirements.txt
-python extract_from_video.py --source fire.mp4
-```
-
 ### 1. Clone the Repo
 ```bash
 git clone https://github.com/your-username/emergency-ai.git
 cd emergency-ai
-
+```
 ### 2. Install Dependencies
-'''bash
-pip install -r requirements.txt '''
-
+```bash
+pip install -r requirements.txt
+```
 BLIP is downloaded automatically using transformers. No API key required.
 
 ---
@@ -53,9 +48,9 @@ BLIP is downloaded automatically using transformers. No API key required.
 ## How it Works
 
 ### A. Local Video Stream
-'''bash
-python extract_from_video.py --source path/to/video.mp4 '''
-
+```bash
+python extract_from_video.py --source path/to/video.mp4
+```
 This script:
 Extracts frames every 0.5 seconds
 Saves them to extracted_images/
@@ -63,9 +58,9 @@ Classifies each image and prints result
 
 ### B. Remote Image Server (Optional)
 To fetch images from a remote endpoint (e.g., /screenshot_full on an ngrok server):
-'''bash
-python classify_remote.py '''
-
+```bash
+python classify_remote.py
+```
 This script:
 Sends a GET request
 Decodes base64 image response
