@@ -1,0 +1,8 @@
+tensorflow
+opencv-python
+imageio
+numpy
+matplotlib
+tensorflow_hub
+caffe
+flask
