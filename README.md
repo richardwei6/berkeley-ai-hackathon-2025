@@ -36,7 +36,7 @@ To develop an AI-powered pipeline that monitors live or remote video feeds, **an
 ```bash
 git clone https://github.com/your-username/emergency-ai.git
 cd emergency-ai
-'''
+bash'''
 
 ### 2. Install Dependencies
 '''bash
