@@ -8,7 +8,7 @@ This project leverages AI and computer vision to **detect real-world emergencies
 - Car crashes  
 - People collapsing (e.g., fainting, seizures, medical emergencies)
 
-When an emergency is detected, the system can **automatically notify the appropriate first responders** via configurable alert mechanisms (e.g., webhooks, email, SMS, or 911 dispatch).
+When an emergency is detected, the system can **automatically notify the appropriate first responders** via configurable alert mechanisms
 
 ---
 
@@ -26,7 +26,7 @@ To develop an AI-powered pipeline that monitors live or remote video feeds, **an
 - **AI-based emergency classification using open-source vision models**
 - **Supports fire, crash, and collapse detection**
 - **Auto-saving of emergency frames**
-- **(Coming soon)**: Auto-alert system for responders
+- **Auto-alert system for responders**
 
 ---
 
