@@ -4,6 +4,7 @@ from person_detection.people_cropper import PeopleCropper
 from flask import Flask, send_file
 import base64
 import msgpack
+from datetime import datetime, timedelta
 
 seconds_between_screenshots = 2
 
@@ -48,7 +49,9 @@ def screenshot_people():
         }
         packed_response = msgpack.packb(response)
 
-        return packed_response, 200, {'Content-Type': 'application/x-msgpack'}
+        resp = packed_response, 200, {'Content-Type': 'application/x-msgpack'}
+        remove_old_screenshots()
+        return resp
     else:
         return "Failed to take screenshot", 500
 
@@ -71,9 +74,37 @@ def screenshot_full():
         }
         packed_response = msgpack.packb(response)
 
-        return packed_response, 200, {'Content-Type': 'application/x-msgpack'}
+        resp = packed_response, 200, {'Content-Type': 'application/x-msgpack'}
+        remove_old_screenshots()
+        return resp
     else:
         return "Failed to take screenshot", 500
+
+def remove_old_screenshots():
+    # Get all png files in screenshots dir sorted by creation time
+    screenshot_files = [f for f in os.listdir(shared_screenshots_dir) if f.endswith('.png')]
+    screenshot_files.sort(key=lambda x: os.path.getctime(os.path.join(shared_screenshots_dir, x)))
+    
+    # Remove all but the 5 most recent png files
+    if len(screenshot_files) > 5:
+        for file in screenshot_files[:-5]:
+            os.remove(os.path.join(shared_screenshots_dir, file))
+            print(f"Removed {file}")
+
+    # Get all folders in people dir sorted by creation time
+    people_folders = [f for f in os.listdir(shared_people_dir) if os.path.isdir(os.path.join(shared_people_dir, f))]
+    people_folders.sort(key=lambda x: os.path.getctime(os.path.join(shared_people_dir, x)))
+
+    # Remove all but the 5 most recent folders
+    if len(people_folders) > 5:
+        for folder in people_folders[:-5]:
+            folder_path = os.path.join(shared_people_dir, folder)
+            # Remove all files in the folder first
+            for file in os.listdir(folder_path):
+                os.remove(os.path.join(folder_path, file))
+            # Remove the empty folder
+            os.rmdir(folder_path)
+            print(f"Removed folder {folder}")
 
 if __name__ == '__main__':
     app.run(host='localhost', port=8100)
