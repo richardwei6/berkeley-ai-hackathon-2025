@@ -6,8 +6,6 @@ import base64
 import msgpack
 from datetime import datetime, timedelta
 
-seconds_between_screenshots = 2
-
 test_loc = "37.8688956,-122.2600617"
 
 shared_screenshots_dir = "./shared/screenshots"
@@ -17,7 +15,7 @@ if not os.path.exists(shared_screenshots_dir):
     os.makedirs(shared_screenshots_dir)
 
 # Test camera input
-camera = CameraInput(output_dir=shared_screenshots_dir, seconds_between_screenshots=seconds_between_screenshots)
+camera = CameraInput(output_dir=shared_screenshots_dir)
 
 # People detection
 people_cropper = PeopleCropper(output_dir=shared_people_dir)
@@ -31,9 +29,12 @@ def screenshot_people():
     filename = camera.take_screenshot()
     
     if filename and os.path.exists(filename):
+        remove_old_screenshots()
         # Process the image to detect people
         people_filenames = people_cropper.detect(filename)
         # Convert each cropped image to base64
+        if (people_filenames is None or len(people_filenames) == 0):
+            return "No people detected", 400
 
         encoded_images = []
         for person_file in people_filenames:
@@ -49,9 +50,7 @@ def screenshot_people():
         }
         packed_response = msgpack.packb(response)
 
-        resp = packed_response, 200, {'Content-Type': 'application/x-msgpack'}
-        remove_old_screenshots()
-        return resp
+        return packed_response, 200, {'Content-Type': 'application/x-msgpack'}
     else:
         return "Failed to take screenshot", 500
 
@@ -62,6 +61,7 @@ def screenshot_full():
     filename = camera.take_screenshot()
     
     if filename and os.path.exists(filename):
+        remove_old_screenshots()
         # Convert the image to base64
         with open(filename, 'rb') as f:
             img_bytes = f.read()
@@ -74,9 +74,7 @@ def screenshot_full():
         }
         packed_response = msgpack.packb(response)
 
-        resp = packed_response, 200, {'Content-Type': 'application/x-msgpack'}
-        remove_old_screenshots()
-        return resp
+        return packed_response, 200, {'Content-Type': 'application/x-msgpack'}
     else:
         return "Failed to take screenshot", 500
 
