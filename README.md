@@ -32,11 +32,15 @@ To develop an AI-powered pipeline that monitors live or remote video feeds, **an
 
 ## Setup
 
+```bash
+pip install -r requirements.txt
+python extract_from_video.py --source fire.mp4
+```
+
 ### 1. Clone the Repo
 ```bash
 git clone https://github.com/your-username/emergency-ai.git
 cd emergency-ai
-bash'''
 
 ### 2. Install Dependencies
 '''bash
