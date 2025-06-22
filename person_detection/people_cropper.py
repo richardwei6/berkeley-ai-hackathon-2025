@@ -88,6 +88,9 @@ class PeopleCropper:
 
             output_filenames = []
             for i, (cropped, confidence) in enumerate(people_crops):
+                if cropped.shape[0] < 10 or cropped.shape[1] < 10:
+                    print(f"Skipping person {i} - too small")
+                    continue
                 output_filename = f"{image_output_dir}/person_{i}_conf_{confidence:.2f}.jpg"
                 cv2.imwrite(output_filename, cropped, [cv2.IMWRITE_JPEG_QUALITY, 20])
                 print(f"Saved: {output_filename}")
