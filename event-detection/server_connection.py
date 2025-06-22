@@ -55,7 +55,7 @@ def fetch_image_from_server(url):
         if response.status_code == 200:
             imgpath, loc = decode_screenshot_response(response.content)
         else:
-            print(f"Failed to get screenshot: {response.status_code}")
+            print(f"[ERROR] Failed to get screenshot: {response.status_code}")
 
         cv_image = cv2.imread(imgpath)
         cv2.imshow("Live Emergency Feed", cv_image)
@@ -65,7 +65,7 @@ def fetch_image_from_server(url):
         
         label = classify_pil_image(img)
         if label in ["fire", "crash"]:
-            send_url = "https://e852-2607-f140-400-76-b52a-4e04-73ef-52d6.ngrok-free.app/api/emergency-detection-base64"
+            send_url = "https://42f2-2607-f140-400-49-75cb-ca8-db44-2ce3.ngrok-free.app/api/emergency-detection-base64"
             try:
                 response = requests.post(send_url, data=image_to_base64(img), timeout=10)
                 if response.status_code == 200:
