@@ -60,7 +60,7 @@ def detect(imgfile):
     people_crops = []
     for i in range(len(box)):
         classification = CLASSES[int(cls[i])]
-        if classification == 'person':
+        if classification == 'person' and conf[i] > 0.1:
             x1, y1, x2, y2 = box[i]
             cropped_img = origimg[y1:y2, x1:x2]
             people_crops.append((cropped_img, conf[i]))
@@ -86,10 +86,15 @@ for f in os.listdir(test_dir):
     # if detect(test_dir + "/" + f) == False:
     #    break
     people_crops = detect(test_dir + "/" + f)
+    base_name = os.path.splitext(f)[0]
+    
+    # Create output subdirectory for this image
+    image_output_dir = os.path.join(output_dir, base_name)
+    os.makedirs(image_output_dir, exist_ok=True)
+    
     if people_crops:
-        base_name = os.path.splitext(f)[0]
         for i, (cropped, confidence) in enumerate(people_crops):
-            output_filename = f"{output_dir}/{base_name}_person_{i}_conf_{confidence:.2f}.jpg"
+            output_filename = f"{image_output_dir}/person_{i}_conf_{confidence:.2f}.jpg"
             cv2.imwrite(output_filename, cropped)
             print(f"Saved: {output_filename}")
     else:
