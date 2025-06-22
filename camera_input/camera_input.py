@@ -55,7 +55,7 @@ class CameraInput:
             break
 
         if ret:
-            timestamp = datetime.now().strftime("%m:%d~%H:%M:%S")
+            timestamp = datetime.now().strftime("%m:%d~%H:%M:%S:%f")
             filename = os.path.join(self.output_dir, f"screenshot {timestamp}.png")
             cv2.imwrite(filename, frame)
             print(f"Screenshot saved as {filename}")
