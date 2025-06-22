@@ -1,12 +1,15 @@
 import cv2
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 
 class CameraInput:
-    def __init__(self, camera_index=0, output_dir='screenshots'):
+    def __init__(self, camera_index=0, output_dir='screenshots', seconds_between_screenshots=1):
         self.cap = cv2.VideoCapture(camera_index)
         self.output_dir = output_dir
         self.running = False
+        self.seconds_between_screenshots = seconds_between_screenshots
+        self.last_screenshot_time = 0
+        self.last_screenshot_filename = None
 
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
@@ -55,10 +58,15 @@ class CameraInput:
             break
 
         if ret:
+            if self.last_screenshot_filename and datetime.now() - self.last_screenshot_time < timedelta(seconds=self.seconds_between_screenshots):
+                print("Skipping screenshot - too soon")
+                return self.last_screenshot_filename
+            self.last_screenshot_time = datetime.now() 
             timestamp = datetime.now().strftime("%m:%d~%H:%M:%S:%f")
             filename = os.path.join(self.output_dir, f"screenshot {timestamp}.png")
             cv2.imwrite(filename, frame)
             print(f"Screenshot saved as {filename}")
+            self.last_screenshot_filename = filename
             return filename
         else:
             print("!! Failed to take screenshot after 3 tries !!")    

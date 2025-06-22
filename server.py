@@ -5,6 +5,8 @@ from flask import Flask, send_file
 import base64
 import msgpack
 
+seconds_between_screenshots = 2
+
 test_loc = "37.8688956,-122.2600617"
 
 shared_screenshots_dir = "./shared/screenshots"
@@ -14,7 +16,7 @@ if not os.path.exists(shared_screenshots_dir):
     os.makedirs(shared_screenshots_dir)
 
 # Test camera input
-camera = CameraInput(output_dir=shared_screenshots_dir)
+camera = CameraInput(output_dir=shared_screenshots_dir, seconds_between_screenshots=seconds_between_screenshots)
 
 # People detection
 people_cropper = PeopleCropper(output_dir=shared_people_dir)
