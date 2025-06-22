@@ -7,5 +7,4 @@ def main():
         classify_remote_image(url)
         time.sleep(1)
 
-
 main()

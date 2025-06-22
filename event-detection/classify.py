@@ -29,6 +29,7 @@ def classify_pil_image(image: Image.Image):
 
 from server_connection import fetch_image_from_server
 def classify_remote_image(url):
+    print('------------------------------------------------------------------------------')
     image = fetch_image_from_server(url)
     
     if image is None:
