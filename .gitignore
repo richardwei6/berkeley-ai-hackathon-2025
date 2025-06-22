@@ -1,2 +1,6 @@
 *.DS_Store
 *.venv
+pose-detection/willson_fruity.jpeg
+pose-detection/willson_yosemite.jpeg
+pose-detection/run_collapse_model.py
+*.pyc
