@@ -7,3 +7,7 @@ tensorflow_hub
 caffe
 flask
 msgpack
+onnxruntime
+torch
+pandas
+seaborn

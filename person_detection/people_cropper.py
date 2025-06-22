@@ -92,7 +92,7 @@ class PeopleCropper:
                     print(f"Skipping person {i} - too small")
                     continue
                 output_filename = f"{image_output_dir}/person_{i}_conf_{confidence:.2f}.jpg"
-                cv2.imwrite(output_filename, cropped, [cv2.IMWRITE_JPEG_QUALITY, 20])
+                cv2.imwrite(output_filename, cropped, [cv2.IMWRITE_JPEG_QUALITY, 100])
                 print(f"Saved: {output_filename}")
                 output_filenames.append(output_filename)
             return output_filenames 
