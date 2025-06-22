@@ -72,19 +72,24 @@ class PeopleCropper:
         
         return people_crops
 
-    def detect(self, directory):
+    def detect_dir(self, directory):
         for f in os.listdir(directory):
-            people_crops = self._detect(directory + "/" + f)
-            base_name = os.path.splitext(f)[0]
+            self.detect(directory + "/" + f)
             
-            if people_crops:
-                # Create output subdirectory for this image
-                image_output_dir = os.path.join(self.output_dir, base_name)
-                os.makedirs(image_output_dir, exist_ok=True)
+    def detect(self, filepath):
+        people_crops = self._detect(filepath)
+        
+        if people_crops:
+            # Create output subdirectory for this image
+            filename = filepath.split('/')[-1]
+            print(filename)
+            image_output_dir = os.path.join(self.output_dir, filename)
+            os.makedirs(image_output_dir, exist_ok=True)
 
-                for i, (cropped, confidence) in enumerate(people_crops):
-                    output_filename = f"{image_output_dir}/person_{i}_conf_{confidence:.2f}.jpg"
-                    cv2.imwrite(output_filename, cropped)
-                    print(f"Saved: {output_filename}")
-            else:
-                print(f"No people detected in {f}")
+            output_filenames = []
+            for i, (cropped, confidence) in enumerate(people_crops):
+                output_filename = f"{image_output_dir}/person_{i}_conf_{confidence:.2f}.jpg"
+                cv2.imwrite(output_filename, cropped)
+                print(f"Saved: {output_filename}")
+                output_filenames.append(output_filename)
+            return output_filenames 

@@ -45,11 +45,20 @@ class CameraInput:
             print("Webcam is not open.")
             return
 
-        ret, frame = self.cap.read()
+        tries = 0
+        while tries < 3:
+            ret, frame = self.cap.read()
+            if not ret:
+                print("Failed to grab frame - %i", tries)
+                tries += 1
+                continue
+            break
+
         if ret:
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            filename = os.path.join(self.output_dir, f"screenshot_{timestamp}.png")
+            timestamp = datetime.now().strftime("%m:%d~%H:%M:%S")
+            filename = os.path.join(self.output_dir, f"screenshot {timestamp}.png")
             cv2.imwrite(filename, frame)
             print(f"Screenshot saved as {filename}")
+            return filename
         else:
-            print("Failed to take screenshot.")
+            print("!! Failed to take screenshot after 3 tries !!")    

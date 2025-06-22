@@ -6,3 +6,4 @@ matplotlib
 tensorflow_hub
 caffe
 flask
+msgpack
